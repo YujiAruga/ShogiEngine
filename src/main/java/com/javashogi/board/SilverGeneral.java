@@ -1,7 +1,7 @@
 package com.javashogi.board;
 
-public class Silver extends Piece {
-    public Silver(boolean isBlack) {
+public class SilverGeneral extends Piece {
+    public SilverGeneral(boolean isBlack) {
         super(isBlack);
     }
 
