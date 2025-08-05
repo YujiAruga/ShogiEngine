@@ -59,6 +59,42 @@ public class Board {
         board[8][8] = new Lance(true);
     }
 
+    public boolean movePiece(int fromRow, int fromCol, int toRow, int toCol) {
+        Piece piece = board[fromRow][fromCol];
+
+        if (piece == null) {
+            System.out.println("No piece at source.");
+            return false;
+        }
+
+        if (!isValidMove(piece, fromRow, fromCol, toRow, toCol)) {
+            System.out.println("Invalid move for " + piece.getSymbol());
+            return false;
+        }
+
+        // Capture if any piece at destination
+        /*
+        if (board[toRow][toCol] != null) {
+            reserve.add(board[toRow][toCol])
+        */
+
+        board[toRow][toCol] = piece;
+        board[fromRow][fromCol] = null;
+
+        return true;
+    }
+
+    private boolean isValidMove(Piece piece, int fromRow, int fromCol, int toRow, int toCol) {
+
+        if (piece instanceof Pawn) {
+            int direction = piece.isBlack ? -1 : 1;
+            return (toRow == fromRow + direction) && (toCol == fromCol);
+        }
+
+        // TODO: Add logic for other pieces
+        return true;
+    }
+
     public void printBoard() {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
