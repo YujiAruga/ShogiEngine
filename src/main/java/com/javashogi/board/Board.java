@@ -28,7 +28,7 @@ public class Board {
         board[0][8] = new Lance(false);
 
         // Row 1
-        board[1][1] = new Rock(false);
+        board[1][1] = new Rook(false);
         board[1][7] = new Bishop(false);
 
         // Row 2
@@ -45,7 +45,7 @@ public class Board {
 
         // Row 7
         board[7][1] = new Bishop(true);
-        board[7][7] = new Rock(true);
+        board[7][7] = new Rook(true);
 
         // Row 8
         board[8][0] = new Lance(true);
