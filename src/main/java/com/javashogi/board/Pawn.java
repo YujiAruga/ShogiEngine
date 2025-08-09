@@ -10,4 +10,10 @@ public class Pawn extends Piece {
     public char getSymbol() {
         return isBlack ? 'P' : 'p';
     }
+
+    @Override
+    public boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol, Board board) {
+        int direction = isBlack ? -1 : 1;
+        return (toRow == fromRow + direction) && (toCol == fromCol) && board.getPiece(toRow, toCol) == null;
+    }
 }

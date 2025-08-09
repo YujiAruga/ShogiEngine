@@ -16,5 +16,11 @@ public abstract class Piece {
         promoted = true;
     }
 
+    public boolean isBlack() {
+        return isBlack;
+    }
+
     public abstract char getSymbol();
+
+    public abstract boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol, Board board);
 }

@@ -95,6 +95,29 @@ public class Board {
         return true;
     }
 
+    public Piece getPiece(int row, int col) {
+        if (row < 0 || row >= 9 || col < 0 || col >= 9) return null;
+        return board[row][col];
+    }
+
+    public boolean inBounds(int r, int c) {
+        return r >= 0 && r < 9 && c >= 0 && c < 9;
+    }
+
+    public boolean isEmpty(int r, int c) {
+        return getPiece(r, c) == null;
+    }
+
+    public boolean isEnemyAt(int r, int c, boolean myColor) {
+        Piece p = getPiece(r, c);
+        return p != null && p.isBlack() != myColor;
+    }
+
+    public boolean isOwnAt(int r, int c, boolean myColor) {
+        Piece p = getPiece(r, c);
+        return p != null && p.isBlack() == myColor;
+    }
+
     public void printBoard() {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
