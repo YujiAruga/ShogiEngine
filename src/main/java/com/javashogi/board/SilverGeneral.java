@@ -12,6 +12,8 @@ public class SilverGeneral extends Piece {
 
     @Override
     public boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol, Board board) {
+        if (promoted) return goldLikeMove(fromRow, fromCol, toRow, toCol, board);
+
         if (!board.inBounds(toRow, toCol)) return false;
         else if (fromRow == toRow && fromCol == toCol) return false;
         else if (board.isOwnAt(toRow, toCol, isBlack)) return false;

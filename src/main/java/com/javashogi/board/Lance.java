@@ -12,6 +12,9 @@ public class Lance extends Piece {
 
     @Override
     public boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol, Board board) {
+        if (promoted) return goldLikeMove(fromRow, fromCol, toRow, toCol, board);
+
+        if (fromRow == toRow && fromCol == toCol) return false;
         int direction = isBlack ? -1 : 1;
 
         if (!board.inBounds(toRow,toCol) || fromCol != toCol) {
