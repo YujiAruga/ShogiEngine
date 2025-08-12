@@ -15,7 +15,20 @@ public class Rook extends Piece {
         if (!board.inBounds(toRow, toCol)) return false;
         if (fromRow == toRow && fromCol == toCol) return false;
         if (board.isOwnAt(toRow, toCol, isBlack)) return false;
-        //if (fromRow != toRow && fromCol != toCol) return false;
+
+        if (promoted) {
+            int[][] neighbors = new int[][] {
+                    {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+            };
+
+            for (int[] neighbor : neighbors) {
+                if (fromRow + neighbor[0] == toRow && fromCol + neighbor[1] == toCol) {
+                    return true;
+                }
+            }
+        }
+
+        if (fromRow != toRow && fromCol != toCol) return false;
 
         if (fromRow != toRow) {
             int min = Math.min(fromRow, toRow);
@@ -38,18 +51,6 @@ public class Rook extends Piece {
             }
         }
 
-        if (promoted) {
-            int[][] neighbors = new int[][] {
-                    {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
-            };
-
-            for (int[] neighbor : neighbors) {
-                if (fromRow + neighbor[0] == toRow && fromCol + neighbor[1] == toCol) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return true;
     }
 }
