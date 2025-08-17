@@ -168,6 +168,14 @@ public class Board {
         return false;
     }
 
+    void resetForTest() {
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                board[r][c] = null;
+            }
+        }
+    }
+
     public void printBoard() {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {

@@ -1,6 +1,5 @@
 package com.javashogi.board;
 
-import com.javashogi.board.Board;
 import com.javashogi.testutil.TestBoardUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
