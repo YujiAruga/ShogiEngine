@@ -1,5 +1,9 @@
 package com.javashogi.board;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Board {
     @Override
     public String toString() {
@@ -7,6 +11,8 @@ public class Board {
     }
 
     private Piece[][] board;
+    private final List<Piece> blackHand = new ArrayList<>();
+    private final List<Piece> whiteHand = new ArrayList<>();
 
     public Board() {
         this.board = new Piece[9][9];
@@ -93,7 +99,10 @@ public class Board {
 
         if (!p.isValidMove(fromRow, fromCol, toRow, toCol, this)) return false;
 
-        Piece captured = getPiece(toRow, toCol);
+        Piece target = getPiece(toRow, toCol);
+        if (target != null) {
+            addToHand(target, p.isBlack());
+        }
 
         board[toRow][toCol] = p;
         board[fromRow][fromCol] = null;
@@ -174,6 +183,48 @@ public class Board {
                 board[r][c] = null;
             }
         }
+    }
+
+    public List<Piece> getHand(boolean isBlack) {
+        return Collections.unmodifiableList(isBlack ? blackHand : whiteHand);
+    }
+
+    public String handString(boolean isBlack) {
+        StringBuilder sb = new StringBuilder();
+        List<Piece> hand = isBlack ? blackHand : whiteHand;
+
+        for (Piece piece : hand) {
+            sb.append(piece.getSymbol() + ", ");
+        }
+
+        return sb.toString();
+    }
+
+    private void addToHand(Piece captured, boolean captorIsBlack) {
+        Piece toHand = demotedCopyFor(captured, captorIsBlack);
+        if (captorIsBlack) {
+            blackHand.add(toHand);
+        }
+        else {
+            whiteHand.add(toHand);
+        }
+    }
+
+    private Piece demotedCopyFor(Piece piece, boolean newIsBlack) {
+        if (piece instanceof Pawn) return new Pawn(newIsBlack);
+        if (piece instanceof Lance) return new Lance(newIsBlack);
+        if (piece instanceof Knight) return new Knight(newIsBlack);
+        if (piece instanceof SilverGeneral) return new SilverGeneral(newIsBlack);
+        if (piece instanceof GoldGeneral) return new GoldGeneral(newIsBlack);
+        if (piece instanceof Bishop) return new Bishop(newIsBlack);
+        if (piece instanceof Rook) return new Rook(newIsBlack);
+        if (piece instanceof King) return new King(newIsBlack);
+        throw new IllegalArgumentException("Unknown piece class: " + piece.getClass());
+    }
+
+    public void printHands() {
+        System.out.println("Black hand: " + handString(true));
+        System.out.println("White hand: " + handString(false));
     }
 
     public void printBoard() {
