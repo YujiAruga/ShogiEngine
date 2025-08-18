@@ -227,6 +227,83 @@ public class Board {
         System.out.println("White hand: " + handString(false));
     }
 
+    private List<Piece> hand(boolean isBlack) {
+        return isBlack ? blackHand : whiteHand;
+    }
+
+    private int indexOfHandPiece(List<Piece> hand, Class<? extends Piece> type) {
+        for (int i = 0; i < hand.size(); i++) {
+            if (type.isInstance(hand.get(i))) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private boolean hasUnpromotedPawnInFile(int col, boolean isBlack) {
+        for (int r = 0; r < 9; r++) {
+            Piece piece = board[r][col];
+            if (piece instanceof Pawn && piece.isBlack() == isBlack && !piece.isPromoted()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean violatesLastRankRules(Class<? extends Piece> type, int row, boolean isBlack) {
+        int last = isBlack ? 0 : 8;
+        int lastTwo = isBlack ? 1 : 7;
+
+        if (type == Pawn.class || type == Lance.class) {
+            return row == last;
+        }
+
+        if (type == Knight.class) {
+            return row == last || row == lastTwo;
+        }
+
+        return false;
+    }
+
+    /**
+     *  Drop a piece from hand onto the board.
+     *  @param type      the class of the piece to drop
+     *  @param row, col  destination (must be empty)
+     *  @param isBlack   side performing the drop
+     *  @return true if the drop was legal and applied
+     */
+    public boolean dropPiece(Class<? extends Piece> type, int row, int col, boolean isBlack) {
+        if (!inBounds(row, col)) return false;
+        if (!isEmpty(row, col)) return false;
+
+        List<Piece> h = hand(isBlack);
+        int index = indexOfHandPiece(h, type);
+        if (index == -1) return false;
+
+        if (type == Pawn.class && hasUnpromotedPawnInFile(col, isBlack)) return false;
+
+        if (violatesLastRankRules(type, row, isBlack)) return false;
+
+        // TODO forbid uchifuzume (pawn-drop checkmate)
+        // TODO disallow drops that leave own king in check
+
+        // Do the drop: drop the actual piece from hand
+        Piece piece = h.remove(index);
+        if (piece.isPromoted()) {
+            piece = demotedCopyFor(piece, isBlack);
+        }
+
+        board[row][col] = piece;
+        return true;
+    }
+
+    void addToHandForTest(Piece piece) {
+        if (piece.isBlack()) blackHand.add(piece);
+        else                 whiteHand.add(piece);
+    }
+
     public void printBoard() {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
