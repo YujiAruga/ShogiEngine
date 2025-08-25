@@ -299,6 +299,38 @@ public class Board {
         return true;
     }
 
+    public boolean applyMoveUnchecked(int fromRow, int fromCol, int toRow, int toCol,  boolean promoteIfAvailable) {
+        if (!inBounds(fromRow, fromCol) || !inBounds(toRow, toCol)) return false;
+        Piece piece = getPiece(fromRow, fromCol);
+        if (piece == null) return false;
+        if (!piece.isValidMove(fromRow, fromCol, toRow, toCol, this)) return false;
+
+        Piece target = getPiece(toRow, toCol);
+        if (target != null) addToHand(target, piece.isBlack());
+
+        board[toRow][toCol] = piece;
+        board[fromRow][fromCol] = null;
+
+        if (mustPromote(piece, toRow)) piece.promote();
+        else if (promoteIfAvailable && canPromote(piece, fromRow, toRow)) piece.promote();
+
+        return true;
+    }
+
+    public boolean dropUnchecked(Class<? extends Piece> type, int row, int col, boolean isBlack) {
+        if (!inBounds(row, col) || !isEmpty(row, col)) return false;
+        var hand = hand(isBlack);
+        int index = indexOfHandPiece(hand, type);
+        if (index == -1) return false;
+        if (type == Pawn.class && hasUnpromotedPawnInFile(col, isBlack)) return false;
+        if (violatesLastRankRules(type, row, isBlack)) return false;
+
+        Piece piece = hand.remove(index);
+        if (piece.isPromoted()) piece = demotedCopyFor(piece, isBlack);
+        board[row][col] = piece;
+        return true;
+    }
+
     void addToHandForTest(Piece piece) {
         if (piece.isBlack()) blackHand.add(piece);
         else                 whiteHand.add(piece);
