@@ -336,6 +336,39 @@ public class Board {
         else                 whiteHand.add(piece);
     }
 
+    public int[] findKing(boolean isBlack) {
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                Piece piece = board[row][col];
+                if (piece instanceof King && piece.isBlack() == isBlack) {
+                    return new int[] {row, col};
+                }
+            }
+        }
+
+        throw new IllegalStateException("King not found for side: " + (isBlack ? "Black" : "White"));
+    }
+
+    public boolean isSquareAttacked(int row, int col, boolean byBlack) {
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                Piece piece = board[r][c];
+                if (piece != null && piece.isBlack() == byBlack) {
+                    if (piece.isValidMove(r, c, row, col, this)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isInCheck(boolean isBlack) {
+        int[] king = findKing(isBlack);
+        return isSquareAttacked(king[0], king[1], !isBlack);
+    }
+
     public void printBoard() {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
