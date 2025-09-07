@@ -369,6 +369,42 @@ public class Board {
         return isSquareAttacked(king[0], king[1], !isBlack);
     }
 
+    public Board deepCopy() {
+        Board copy = new Board();
+        copy.resetForTest(); // Clears initial piece setup
+
+        // Copy pieces from ongoing game board
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                Piece piece = board[row][col];
+                if (piece != null) copy.board[row][col] = clonePiece(piece);
+            }
+        }
+
+        // Copy hands (obtained pieces)
+        for (Piece piece : blackHand) copy.blackHand.add(clonePiece(piece));
+        for (Piece piece : whiteHand) copy.whiteHand.add(clonePiece(piece));
+
+        return copy;
+    }
+
+    private Piece clonePiece(Piece piece) {
+        Piece copy;
+
+        if (piece instanceof Pawn) copy = new Pawn(piece.isBlack());
+        else if (piece instanceof Lance) copy = new Lance(piece.isBlack());
+        else if (piece instanceof Knight) copy = new Knight(piece.isBlack());
+        else if (piece instanceof SilverGeneral) copy = new SilverGeneral(piece.isBlack());
+        else if (piece instanceof GoldGeneral) copy = new GoldGeneral(piece.isBlack());
+        else if (piece instanceof Bishop) copy = new Bishop(piece.isBlack());
+        else if (piece instanceof Rook) copy = new Rook(piece.isBlack());
+        else if (piece instanceof King) copy = new King(piece.isBlack());
+        else throw new IllegalArgumentException("Unknown piece type: " + piece.getClass());
+
+        if (piece.isPromoted()) copy.promote();
+        return copy;
+    }
+
     public void printBoard() {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
