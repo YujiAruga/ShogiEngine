@@ -200,15 +200,15 @@ public class Board {
         return sb.toString();
     }
 
-    private void addToHand(Piece captured, boolean captorIsBlack) {
-        Piece toHand = demotedCopyFor(captured, captorIsBlack);
-        if (captorIsBlack) {
-            blackHand.add(toHand);
-        }
-        else {
-            whiteHand.add(toHand);
-        }
-    }
+//    private void addToHand(Piece captured, boolean captorIsBlack) {
+//        Piece toHand = demotedCopyFor(captured, captorIsBlack);
+//        if (captorIsBlack) {
+//            blackHand.add(toHand);
+//        }
+//        else {
+//            whiteHand.add(toHand);
+//        }
+//    }
 
     private Piece demotedCopyFor(Piece piece, boolean newIsBlack) {
         if (piece instanceof Pawn) return new Pawn(newIsBlack);
@@ -403,6 +403,41 @@ public class Board {
 
         if (piece.isPromoted()) copy.promote();
         return copy;
+    }
+
+    // place/remove pieces
+    public void setPiece(int row, int col, Piece piece) { board[row][col] = piece; }
+    public Piece removePiece(int row, int col) { Piece piece = board[row][col]; board[row][col] = null; return piece; }
+
+    public boolean removeFromHand(boolean isBlack, Class<? extends Piece> type ) {
+        var h = hand(isBlack);
+        int index = indexOfHandPiece(h, type);
+        if (index == -1) return false;
+        h.remove(index);
+        return true;
+    }
+
+    public void addToHandRow(boolean isBlack, Piece piece) { hand(isBlack).add(piece); }
+
+    public Piece makePiece(Class<? extends Piece> type, boolean isBlack, boolean promoted) {
+        Piece piece;
+        if (type == Pawn.class) piece = new Pawn(isBlack);
+        else if (type == Lance.class) piece = new Lance(isBlack);
+        else if (type == Knight.class) piece = new Knight(isBlack);
+        else if (type == SilverGeneral.class) piece = new SilverGeneral(isBlack);
+        else if (type == GoldGeneral.class) piece = new GoldGeneral(isBlack);
+        else if (type == Bishop.class) piece = new Bishop(isBlack);
+        else if (type == Rook.class) piece = new Rook(isBlack);
+        else if (type == King.class) piece = new King(isBlack);
+        else throw new IllegalArgumentException("Unknown type: " + type);
+        if (promoted) piece.promote();
+        return piece;
+    }
+
+    private void addToHand(Piece captured, boolean captorIsBlack) {
+        if (captured instanceof King) return; // engine will stop
+        Piece toHand = demotedCopyFor(captured, captorIsBlack);
+        hand(captorIsBlack).add(toHand);
     }
 
     public void printBoard() {
