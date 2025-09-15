@@ -13,13 +13,12 @@ public class Pawn extends Piece {
 
     @Override
     public boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol, Board board) {
-        if (promoted) return goldLikeMove(fromRow, fromCol, toRow, toCol, board);
-
         if (!board.inBounds(toRow, toCol)) return false;
-        else if (fromRow == toRow && fromCol == toCol) return false;
-        else if (board.isOwnAt(toRow, toCol, isBlack)) return false;
+        if (fromRow == toRow && fromCol == toCol) return false;
+        if (promoted) return goldLikeMove(fromRow, fromCol, toRow, toCol, board);
+        if (board.isOwnAt(toRow, toCol, isBlack)) return false;
 
         int direction = isBlack ? -1 : 1;
-        return (toRow == fromRow + direction) && (toCol == fromCol) && board.getPiece(toRow, toCol) == null;
+        return (toRow == fromRow + direction) && (toCol == fromCol);
     }
 }

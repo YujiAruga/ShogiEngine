@@ -331,7 +331,7 @@ public class Board {
         return true;
     }
 
-    void addToHandForTest(Piece piece) {
+    public void addToHandForTest(Piece piece) {
         if (piece.isBlack()) blackHand.add(piece);
         else                 whiteHand.add(piece);
     }

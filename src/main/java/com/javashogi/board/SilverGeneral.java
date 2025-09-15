@@ -12,11 +12,10 @@ public class SilverGeneral extends Piece {
 
     @Override
     public boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol, Board board) {
-        if (promoted) return goldLikeMove(fromRow, fromCol, toRow, toCol, board);
-
         if (!board.inBounds(toRow, toCol)) return false;
-        else if (fromRow == toRow && fromCol == toCol) return false;
-        else if (board.isOwnAt(toRow, toCol, isBlack)) return false;
+        if (fromRow == toRow && fromCol == toCol) return false;
+        if (promoted) return goldLikeMove(fromRow, fromCol, toRow, toCol, board);
+        if (board.isOwnAt(toRow, toCol, isBlack)) return false;
 
         int[][] neighbors = new int[][] {
                 {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}
@@ -25,8 +24,8 @@ public class SilverGeneral extends Piece {
         if (isBlack) {
             for (int[] neighbor : neighbors) {
                 if ((neighbor[0] == 1 && neighbor[1] == 0) ||
-                    (neighbor[0] == 0 && neighbor[1] == 1) ||
-                    (neighbor[0] == 0 && neighbor[1] == -1)) {
+                        (neighbor[0] == 0 && neighbor[1] == 1) ||
+                        (neighbor[0] == 0 && neighbor[1] == -1)) {
                     continue;
                 }
 
@@ -38,8 +37,8 @@ public class SilverGeneral extends Piece {
         else {
             for (int[] neighbor : neighbors) {
                 if ((neighbor[0] == -1 && neighbor[1] == 0) ||
-                    (neighbor[0] == 0 && neighbor[1] == 1) ||
-                    (neighbor[0] == 0 && neighbor[1] == -1)) {
+                        (neighbor[0] == 0 && neighbor[1] == 1) ||
+                        (neighbor[0] == 0 && neighbor[1] == -1)) {
                     continue;
                 }
 
