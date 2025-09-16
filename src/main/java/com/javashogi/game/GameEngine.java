@@ -6,7 +6,9 @@ import com.javashogi.board.Pawn;
 import com.javashogi.board.Piece;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 
 public class GameEngine {
     private final Board board;
@@ -142,6 +144,42 @@ public class GameEngine {
             return true;
         }
     }
+
+    /**
+     * Generate ALL legal moves for side to move
+     */
+    public List<Move> generateLegalMoves() { return generateLegalMoves(blackToMove); }
+
+    // Generate ALL legal moves for the given side,
+    public List<Move> generateLegalMoves(boolean forBlack) {
+        List<Move> out = new ArrayList<>();
+
+        // for normal moves
+        for (int row = 0; row < 9; row++) for (int col = 0; col < 9; col++) {
+            Piece piece = board.getPiece(row, col);
+            if (piece == null || piece.isBlack() != forBlack) continue;
+
+            for (int toRow = 0; toRow < 9; toRow++) for (int toCol = 0; toCol < 9; toCol++) {
+                if (!piece.isValidMove(row, col, toRow, toCol, board)) continue;
+
+                boolean mustPromote = board.mustPromote(piece, toRow);
+                boolean canPromote = board.canPromote(piece, row, toRow);
+
+                if (mustPromote) {
+
+                }
+                else if (canPromote) {
+
+                }
+                else {
+
+                }
+            }
+        }
+    }
+
+
+
 
 
     // ==== move record ====
