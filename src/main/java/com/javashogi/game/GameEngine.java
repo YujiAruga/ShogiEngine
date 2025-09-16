@@ -5,10 +5,7 @@ import com.javashogi.board.King;
 import com.javashogi.board.Pawn;
 import com.javashogi.board.Piece;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 public class GameEngine {
     private final Board board;
@@ -166,16 +163,70 @@ public class GameEngine {
                 boolean canPromote = board.canPromote(piece, row, toRow);
 
                 if (mustPromote) {
-
+                    if (legalAfterSim(Move.move(row, col, toRow, toCol, true), forBlack)) out.add(Move.move(row, col, toRow, toCol, true));
                 }
                 else if (canPromote) {
-
+                    if (legalAfterSim(Move.move(row, col, toRow, toCol, false), forBlack)) out.add(Move.move(row, col, toRow, toCol, false));
+                    if (legalAfterSim(Move.move(row, col, toRow, toCol, true), forBlack)) out.add(Move.move(row, col, toRow, toCol, true));
                 }
                 else {
-
+                    if (legalAfterSim(Move.move(row, col, toRow, toCol, false), forBlack)) out.add(Move.move(row, col, toRow, toCol, false));
                 }
             }
         }
+
+        // drops (dedupe types in hand to avoid identical moves twice)
+        Map<Class<? extends Piece>, Integer> handCounts = new HashMap<>();
+        for (Piece hand : board.getHand(forBlack)) {
+            handCounts.merge(hand.getClass(), 1, Integer::sum);
+        }
+
+        for (Class<? extends Piece> type : handCounts.keySet()) {
+            for (int row = 0; row < 9; row++) for (int col = 0; col < 9; col++) {
+                if (!board.isEmpty(row, col)) continue;
+                // Simulate drop to see if geometrically legal & not self-check
+                Move drop = Move.drop(type, row, col);
+                if (legalAfterSim(drop, forBlack)) out.add(drop);
+            }
+        }
+
+        return out;
+    }
+
+
+
+    /** True if applying 'm' for 'forBlack' on a copy is legal (not leaving own king in check, & passes rules).**/
+    private boolean legalAfterSim(Move move, boolean forBlack) {
+        Board tmp = board.deepCopy();
+        boolean ok = move.drop
+                ? tmp.dropUnchecked(move.dropType, move.toRow, move.toCol, forBlack)
+                : tmp.applyMoveUnchecked(move.fromRow, move.fromCol, move.toRow, move.toCol, move.promote);
+        if (!ok) return false;
+
+        // No self-check
+        if (tmp.isInCheck(forBlack)) return false;
+
+        // Uchifuzume: reject pawn drop mate
+        if (move.drop && move.dropType == Pawn.class) {
+            boolean opp = !forBlack;
+            if (tmp.isInCheck(opp) && isPawnDropMate(tmp, move.toRow, move.toCol, opp)) return false;
+        }
+
+        return true;
+    }
+
+    /** Checkmate if side is currently in check AND has no legal replies. */
+    public boolean isCheckmate(boolean forBlack) {
+        if (!board.isInCheck(forBlack)) return false;
+        return generateLegalMoves(forBlack).isEmpty();
+    }
+
+    /** Evaluate simple result */
+    public GameResult getResult() {
+        if (isCheckmate(blackToMove)) {
+            return blackToMove ? GameResult.CHECKMATE_WHITE_WINS : GameResult.CHECKMATE_BLACK_WINS;
+        }
+        return GameResult.ONGOING;
     }
 
 

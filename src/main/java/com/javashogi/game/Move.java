@@ -15,7 +15,7 @@ public final class Move {
         this.promote = promote;
     }
 
-    public static Move drop(int fromRow, int fromCol, int toRow, int toCol, boolean promote) {
+    public static Move move(int fromRow, int fromCol, int toRow, int toCol, boolean promote) {
         return new Move(false, fromRow, fromCol, toRow, toCol, null, promote);
     }
 
