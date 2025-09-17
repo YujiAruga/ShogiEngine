@@ -1,4 +1,4 @@
-package com.javashogi;
+package com.javashogi.cli;
 
 import com.javashogi.board.Board;
 
