@@ -177,7 +177,7 @@ public class Board {
         return false;
     }
 
-    void resetForTest() {
+    public void resetForTest() {
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c < 9; c++) {
                 board[r][c] = null;

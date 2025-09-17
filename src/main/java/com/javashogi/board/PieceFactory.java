@@ -46,7 +46,7 @@ public final class PieceFactory {
     public static char toSfenChar(Piece piece) {
         char base = (piece instanceof Pawn) ? 'P'
                   : (piece instanceof Lance) ? 'L'
-                  : (piece instanceof Knight) ? 'K'
+                  : (piece instanceof Knight) ? 'N'
                   : (piece instanceof SilverGeneral) ? 'S'
                   : (piece instanceof GoldGeneral) ? 'G'
                   : (piece instanceof Bishop) ? 'B'
